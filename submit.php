@@ -59,9 +59,11 @@
         
         <label>Position Applied For:</label>
         <select name="position_applied" required>
-            <option value="Software Engineer">Software Engineer</option>
+            <option value="Graduate Civil Engineer">Graduate Civil Engineer</option>
+            <option value="Senior Civil Engineer">Senior Civil Engineer</option>
+            <option value="MEP Engineer">MEP Engineer</option>
+            <option value="Senior MEP Engineer">Senior MEP Engineer</option>
             <option value="Project Manager">Project Manager</option>
-            <option value="Civil Engineer">Civil Engineer</option>
             <option value="Structural Engineer">Structural Engineer</option>
             <option value="Site Supervisor">Site Supervisor</option>
         </select>
