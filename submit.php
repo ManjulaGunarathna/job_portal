@@ -53,6 +53,8 @@
             <option value="Kurunagala">Kandy</option>
             <option value="Puttalama">Kandy</option>
             <option value="Jaffna">Kandy</option>
+            <option value="Trincomalee">Kandy</option>
+            <option value="Baticlo">Kandy</option>
         </select>
         
         <label>Position Applied For:</label>
