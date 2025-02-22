@@ -50,11 +50,11 @@
             <option value="Kandy">Kandy</option>
             <option value="Galle">Galle</option>
             <option value="Matara">Matara</option>
-            <option value="Kurunagala">Kandy</option>
-            <option value="Puttalama">Kandy</option>
-            <option value="Jaffna">Kandy</option>
-            <option value="Trincomalee">Kandy</option>
-            <option value="Baticlo">Kandy</option>
+            <option value="Kurunagala">Kurunagala</option>
+            <option value="Puttalama">Puttalama</option>
+            <option value="Jaffna">Jaffna</option>
+            <option value="Trincomalee">Trincomalee</option>
+            <option value="Baticlo">Baticlo</option>
         </select>
         
         <label>Position Applied For:</label>
@@ -75,3 +75,49 @@
     </form>
 </body>
 </html>
+
+<?php
+require 'db_connect.php'; // Include database connection
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $first_name = htmlspecialchars($_POST['first_name']);
+    $last_name = htmlspecialchars($_POST['last_name']);
+    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+    $contact_number = htmlspecialchars($_POST['contact_number']);
+    $district = htmlspecialchars($_POST['district']);
+    $position_applied = htmlspecialchars($_POST['position_applied']);
+
+    // File upload handling
+    $target_dir = "uploads/";
+    $file_name = basename($_FILES["cv"]["name"]);
+    $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+    $allowed_types = array("pdf", "doc", "docx");
+    $new_file_name = uniqid() . "_cv." . $file_ext;
+    $target_file = $target_dir . $new_file_name;
+
+    if (in_array($file_ext, $allowed_types) && move_uploaded_file($_FILES["cv"]["tmp_name"], $target_file)) {
+        // Insert into database
+        $sql = "INSERT INTO applicants (first_name, last_name, email, contact_number, district, position_applied, cv_path) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sssssss", $first_name, $last_name, $email, $contact_number, $district, $position_applied, $target_file);
+        
+        if ($stmt->execute()) {
+            // Send confirmation email
+            $to = $email;
+            $subject = "Job Application Received";
+            $message = "Dear $first_name,\n\nThank you for applying for the $position_applied position. We have received your application and will review it shortly.\n\nBest regards,\nCompany HR Team";
+            $headers = "From: hr@company.com";
+            mail($to, $subject, $message, $headers);
+            
+            echo "Application submitted successfully.";
+        } else {
+            echo "Error: " . $conn->error;
+        }
+        $stmt->close();
+    } else {
+        echo "Invalid file type or upload error.";
+    }
+    $conn->close();
+}
+?>
+
